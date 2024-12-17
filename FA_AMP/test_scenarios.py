@@ -150,7 +150,6 @@ def train_model(
             outputs = model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
             loss = outputs.loss
 
-        # Обратное распространение градиентов
         if use_amp:
             scaler.scale(loss).backward()
             scaler.step(optimizer)
@@ -159,7 +158,6 @@ def train_model(
             loss.backward()
             optimizer.step()
 
-        # Сбор статистики
         tokens_per_second = input_ids.numel() / (time.time() - start_time)
         memory_stats = get_memory_stats(torch.device(device))
         stats.append({
@@ -170,7 +168,6 @@ def train_model(
         })
         step_counter += 1
 
-        # Условие выхода
         if step_counter >= max_steps:
             break
 
@@ -253,7 +250,7 @@ def main():
 
     # Log results
     log_to_file(
-        filepath=f"model-speedup-guide/logs/flash_attention_amp_gpt2.json",
+        filepath=f"FA_AMP/logs/flash_attention_amp_gpt2.json",
         seq_len=seq_len,
         scenario_name=scenario,
         stats=stats
